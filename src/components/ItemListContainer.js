@@ -1,40 +1,29 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom"
-import ItemDetailContainer from "./ItemDetailContainer";
+import { useParams } from "react-router-dom"
+import ItemList from "./ItemList";
 
 const ItemListContainer = () => {
+
+    const { categoryId } = useParams()
+    console.log(categoryId)
     
     const [vehicles, setVehicles] = useState(null)
 
     useEffect( () => {
         
-        fetch("http://localhost:8000/vehicles")
-        .then( res => {
-            return res.json()
-        })
-        .then( data => {
-            setVehicles(data)
-            console.log(vehicles)
-        })
+        fetch("https://6317c028f6b281877c5cb9c4.mockapi.io/api/autos")
+            .then( res => {
+                return res.json()
+            })
+            .then( data => {
+                setVehicles(data)
+            })
 
     },[])
 
     return(
         <div className="itemListContainer">
-            {vehicles && vehicles.map(vehicle => (
-                <Link to={`/item/${vehicle.id}`} element={<ItemDetailContainer />} key={vehicle.id}>
-                    <div className="vehicle">
-                    <div className="vehicleImg">
-                        <img src={vehicle.img} alt={vehicle.img} />
-                    </div>
-                    <div className="vehicleInfo">
-                        <p className="precio">u$s {vehicle.precio}</p>
-                        <p className="titulo">{`${vehicle.marca} ${vehicle.modelo}`}</p>
-                        <p className="kilometros">{`${vehicle.kilometros} km.`}</p>
-                    </div>
-                </div>
-                </Link>
-            ))}
+            {vehicles && <ItemList vehicles={categoryId ? vehicles.filter(vehicle => vehicle.categoria === categoryId) : vehicles} />}
         </div>
     )
 }
